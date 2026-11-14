@@ -56,7 +56,26 @@ ggplot(data=order_product_data) +
 # TASK 2
 # Orders That Were Not Delivered
 # ==================================
+#Count the number of orders in each order staus
+order_status_summary<-orders%>%
+  count(order_status, name="order_count") %>%
+  mutate(percentage=order_count/sum(order_count)*100)
 
+print(order_status_summary)
+
+#Create a bar chart of this order_status
+ggplot(data=order_status_summary)+
+    geom_col(mapping=aes(x=order_status, y=order_count), fill="steelblue") +
+  labs(x="Order Status", y="Number of Orders", title="Order Status Summary")
+
+#Find orders percentages those are not delivered
+not_delivered_percentage<- order_status_summary%>%
+  filter(order_status!="delivered")%>%
+  summarise(
+    not_delivered=sum(percentage)
+  )
+  
+print(not_delivered_percentage)
 
 # ==================================
 # TASK 3
