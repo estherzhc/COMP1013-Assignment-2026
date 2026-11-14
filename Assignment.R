@@ -11,13 +11,13 @@ library(tidyverse)
 library(ggplot2)
 
 #Load files
-customers=read_csv("customers.csv")
+customers=read.csv("customers.csv")
 geolocation=read.csv("geolocation.csv")
 order_items=read.csv("order_items.csv")
-orders=read_csv("orders.csv")
-payments=read_csv("payments.csv")
-products=read_csv("products.csv")
-sellers=read_csv("sellers.csv")
+orders=read.csv("orders.csv")
+payments=read.csv("payments.csv")
+products=read.csv("products.csv")
+sellers=read.csv("sellers.csv")
 
 names(customers)
 names(geolocation)
@@ -36,12 +36,21 @@ names(sellers)
 ggplot(data=order_items) + geom_histogram(mapping=aes(x=price), fill="steelblue", colour="black") + labs(title="Distribution of Item Prices", x="Price", y="Frequency")
 
 #Calculate mean item price
-mean_price=mean(order_items$price)
+mean_price<-mean(order_items$price)
 print(mean_price)
 
 #Calculate median item price
-median_price=median(order_items$price)
+median_price<-median(order_items$price)
 print(median_price)
+
+#Join order_items and products using product_id
+order_product_data<-order_items%>%
+  left_join(products, by="product_id")
+
+#Create a scatter plot of freight value against product weight
+ggplot(data=order_product_data) + 
+  geom_point(mapping=aes(x=product_weight_g, y=freight_value), colour="steelblue") + 
+  labs(x="Product Weight(G)", y="Freight Value", title="Freight Value and Product Weight")
 
 # ==================================
 # TASK 2
