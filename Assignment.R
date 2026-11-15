@@ -119,7 +119,11 @@ ggplot(data=payment_usage_frequency) +
   geom_col(mapping= aes(x=payment_type, y=payment_usage_percentage), fill="steelblue") +
   labs(x="Payment Type", y="Percentage of Payment Usage (%)", title="Payment Type Usage Frequency")
 
+#Compare payment values across different payment types using a boxplot
 
+ggplot(data=payments)+
+  geom_boxplot(mapping=aes(x=payment_type, y=payment_value), colour="steelblue") +
+  labs(x="Payment Type", y="Payment Value", title="Payment Value Distribution by Payment Type")
 
 
 
