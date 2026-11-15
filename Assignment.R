@@ -11,13 +11,13 @@ library(tidyverse)
 library(ggplot2)
 
 #Load files
-customers=read.csv("customers.csv")
-geolocation=read.csv("geolocation.csv")
-order_items=read.csv("order_items.csv")
-orders=read.csv("orders.csv")
-payments=read.csv("payments.csv")
-products=read.csv("products.csv")
-sellers=read.csv("sellers.csv")
+customers<-read.csv("customers.csv")
+geolocation<-read.csv("geolocation.csv")
+order_items<-read.csv("order_items.csv")
+orders<-read.csv("orders.csv")
+payments<-read.csv("payments.csv")
+products<-read.csv("products.csv")
+sellers<-ead.csv("sellers.csv")
 
 names(customers)
 names(geolocation)
@@ -56,7 +56,7 @@ ggplot(data=order_product_data) +
 # TASK 2
 # Orders That Were Not Delivered
 # ==================================
-#Count the number of orders in each order staus
+#Count the number of orders in each order status
 order_status_summary<-orders%>%
   count(order_status, name="order_count") %>%
   mutate(percentage=order_count/sum(order_count)*100)
@@ -66,9 +66,9 @@ print(order_status_summary)
 #Create a bar chart of this order_status
 ggplot(data=order_status_summary)+
     geom_col(mapping=aes(x=order_status, y=order_count), fill="steelblue") +
-  labs(x="Order Status", y="Number of Orders", title="Order Status Summary")
+  labs(x="Order Status", y="Number of Orders", title="Number of Orders by Status")
 
-#Find orders percentages those are not delivered
+#Calculate percentage of orders that are not delivered
 not_delivered_percentage<- order_status_summary%>%
   filter(order_status!="delivered")%>%
   summarise(
@@ -76,6 +76,28 @@ not_delivered_percentage<- order_status_summary%>%
   )
   
 print(not_delivered_percentage)
+
+#Join orders.csv and customers.csv using customer_id
+order_and_customers<- orders%>%
+  left_join(customers, by="customer_id")
+
+sum(is.na(order_and_customers$order_status))
+sum(is.na(order_and_customers$customer_state))
+
+#Calculate percentage of orders that are not delivered in each customer state
+state_delivery_summary<- order_and_customers%>%
+  group_by(customer_state)%>%
+  summarise(
+    total_orders=n(),
+    not_delivered_orders= sum(order_status!="delivered"),
+    not_delivered_pct= (not_delivered_orders/total_orders)*100
+  )
+print(state_delivery_summary)
+
+#Create a bar chart of not delivered orders percentage by customer state
+ggplot(data=state_delivery_summary) +
+  geom_col(mapping=aes(x=customer_state, y=not_delivered_pct), fill="steelblue")+
+  labs(x="Customer State", y="Not Delivered Percentage (%)", title="Percentage of Orders Not Delivered by State")
 
 # ==================================
 # TASK 3
