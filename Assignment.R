@@ -103,3 +103,25 @@ ggplot(data=state_delivery_summary) +
 # TASK 3
 # Payment Methods
 # ==================================
+
+#Calculate the number and percentage of payments for each payment type
+
+payment_usage_frequency<- payments%>%
+  count(payment_type, name="total_payment_number")%>%
+  mutate(payment_usage_percentage=
+           (total_payment_number/sum(total_payment_number)*100))
+
+print(payment_usage_frequency)
+
+#Produce a bar chart to visualize payment usage frequency
+
+ggplot(data=payment_usage_frequency) +
+  geom_col(mapping= aes(x=payment_type, y=payment_usage_percentage), fill="steelblue") +
+  labs(x="Payment Type", y="Percentage of Payment Usage (%)", title="Payment Type Usage Frequency")
+
+
+
+
+
+
+
